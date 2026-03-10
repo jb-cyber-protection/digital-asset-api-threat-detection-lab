@@ -121,7 +121,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Tuning decisions are justified with evidence
 
 ## I-009 - Demo Interface (CLI or Notebook)
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added one-command demo CLI with end-to-end generation->detection->triage flow, concise summary output, and validation tests for full scenario coverage.
 - **Goal:** Make the lab easy to present in interviews.
 - **Deliverables:**
   - Guided demo flow from data generation to incident handoff

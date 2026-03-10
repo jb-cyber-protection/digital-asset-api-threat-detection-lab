@@ -18,6 +18,7 @@ This repository follows an issue-driven implementation workflow.
 - SOC runbooks and escalation templates: [runbooks/README.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/runbooks/README.md)
 - Incident case artifacts: `reports/cases/` and `reports/incidents/evidence/`
 - Tuning analysis and metrics: [reports/metrics/I-008-tuning-report.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/metrics/I-008-tuning-report.md)
+- Demo flow: [docs/DEMO_FLOW.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/DEMO_FLOW.md)
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
@@ -56,6 +57,11 @@ This repository follows an issue-driven implementation workflow.
 - Reproducible KPI evaluation pipeline (`scripts/evaluate_tuning.py`)
 - False-positive root-cause analysis and measured improvements across multiple rules
 
+## I-009 Delivered
+- One-command demo CLI (`scripts/demo.py`) for end-to-end walkthrough
+- Demo artifacts generated in a single output folder (events, alerts, triage, summary)
+- 5-8 minute presentation structure included in generated summary output
+
 ## Quick Start
 ### 1) Create environment (recommended)
 ```bash
@@ -83,6 +89,11 @@ make test
 ### 4) Generate a full 10k event dataset
 ```bash
 python3 scripts/generate_activity.py --events 10000 --seed 7 --start-time "2026-01-01T00:00:00+00:00" --output data/generated/i002_events.jsonl --summary data/generated/i002_summary.json
+```
+
+### 5) Run interview demo flow
+```bash
+make demo
 ```
 
 ## Intended Outcome
