@@ -82,7 +82,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Triage fields are consistent across alert types
 
 ## I-006 - SOC Runbooks and Escalation Templates
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added five SOC runbooks, expanded L1->L2 escalation template, and a containment action matrix with authorized vs escalate-only actions plus completeness tests.
 - **Goal:** Create actionable SOPs for common detections.
 - **Deliverables:**
   - Runbooks for phishing-like token abuse, suspicious login, key misuse, malware-like endpoint signal, and exfil-like traffic bursts

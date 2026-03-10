@@ -2,30 +2,40 @@
 
 ## Incident Summary
 - Case ID:
-- Triggered Detection:
-- Severity:
+- Triggered Rule/Scenario:
+- Severity Recommendation:
+- Confidence:
 - Current Status:
 
 ## Timeline (UTC)
-- Time:
-- Time:
+- Start:
+- Key Events:
+- End:
 
 ## Scope
-- Affected Users:
+- Affected Accounts:
 - Affected API Keys:
+- Affected Bots/Hosts:
 - Affected Endpoints/Systems:
 
-## IOCs / Indicators
+## IOC Package
 - Source IPs:
-- User Agents:
-- Domains/URLs:
-- Hashes (if available):
+- Countries/Regions:
+- User-Agents:
+- Endpoint Paths:
+- Key Event IDs:
 
 ## Actions Taken by L1
 - Validation steps completed:
-- Containment actions performed:
-- Remaining gaps:
+- Containment actions executed:
+- Controls attempted but blocked:
+
+## Remaining Risks
+- Immediate business impact risk:
+- Data/fund exposure estimate:
+- Unknowns requiring L2/IR investigation:
 
 ## Escalation Ask
-- What L2/IR needs to do next:
-- Suggested urgency:
+- What L2/IR should do next:
+- Urgency:
+- Suggested owner/team:
