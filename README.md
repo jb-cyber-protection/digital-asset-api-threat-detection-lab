@@ -19,6 +19,9 @@ This repository follows an issue-driven implementation workflow.
 - Incident case artifacts: `reports/cases/` and `reports/incidents/evidence/`
 - Tuning analysis and metrics: [reports/metrics/I-008-tuning-report.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/metrics/I-008-tuning-report.md)
 - Demo flow: [docs/DEMO_FLOW.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/DEMO_FLOW.md)
+- Portfolio evidence map: [reports/portfolio/EVIDENCE_MAP.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/portfolio/EVIDENCE_MAP.md)
+- Resume bullets: [reports/portfolio/RESUME_BULLETS.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/portfolio/RESUME_BULLETS.md)
+- Application answer draft: [reports/portfolio/APPLICATION_ANSWER.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/portfolio/APPLICATION_ANSWER.md)
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
@@ -61,6 +64,11 @@ This repository follows an issue-driven implementation workflow.
 - One-command demo CLI (`scripts/demo.py`) for end-to-end walkthrough
 - Demo artifacts generated in a single output folder (events, alerts, triage, summary)
 - 5-8 minute presentation structure included in generated summary output
+
+## I-010 Delivered
+- Final portfolio packaging with evidence map tied directly to repo artifacts
+- Resume bullet options aligned to SOC + digital-asset + algorithmic-trading requirements
+- Submission-ready application answer draft linked to concrete project outputs
 
 ## Quick Start
 ### 1) Create environment (recommended)
