@@ -94,6 +94,23 @@ class TestDetectionEngine(unittest.TestCase):
             )
         )
         idx += 1
+        events.append(
+            self._build_event(
+                idx=idx,
+                timestamp=base + timedelta(minutes=3),
+                event_type="api_key.used",
+                account_id="acct-scn1",
+                api_key_id="key-scn1",
+                bot_id="bot-scn1",
+                ip="55.10.0.4",
+                country="SG",
+                region="ap-southeast-1",
+                user_agent="ua-attacker",
+                endpoint="/v1/order/create",
+                details={"latency_ms": 17},
+            )
+        )
+        idx += 1
 
         # SCN-002: credential stuffing burst + success.
         for attempt in range(20):

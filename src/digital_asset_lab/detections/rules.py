@@ -74,16 +74,23 @@ def _build_alert(
     )
 
 
-def detect_scn_001(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_001(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     for event in events:
         key = event.get("api_key_id")
         if key:
             by_key[str(key)].append(event)
 
-    window = timedelta(minutes=10)
+    window = timedelta(minutes=int(config.get("window_minutes", 10)))
+    min_distinct_countries = int(config.get("min_distinct_countries", 2))
+    require_failure_prelude = bool(config.get("require_failure_prelude", True))
     risky_types = {"api_key.used", "order.create", "order.cancel", "withdrawal.request"}
 
     for api_key_id, key_events in by_key.items():
@@ -100,7 +107,9 @@ def detect_scn_001(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
             countries = {item.get("ip_country") for item in matched if item.get("ip_country")}
             has_failure = any(item.get("event_type") == "auth.login.failure" for item in matched)
             has_risky = any(item.get("event_type") in risky_types for item in matched)
-            if len(countries) < 2 or not has_failure or not has_risky:
+            if len(countries) < min_distinct_countries or not has_risky:
+                continue
+            if require_failure_prelude and not has_failure:
                 continue
 
             alerts.append(
@@ -121,15 +130,22 @@ def detect_scn_001(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
     return alerts
 
 
-def detect_scn_002(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_002(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_ip: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     for event in events:
         if event.get("event_type") in {"auth.login.failure", "auth.login.success"} and event.get("ip"):
             by_ip[str(event["ip"])].append(event)
 
-    window = timedelta(minutes=5)
+    window = timedelta(minutes=int(config.get("window_minutes", 5)))
+    min_failures = int(config.get("min_failures", 20))
+    min_accounts = int(config.get("min_accounts", 5))
 
     for ip_addr, ip_events in by_ip.items():
         ip_events.sort(key=_ts)
@@ -143,7 +159,7 @@ def detect_scn_002(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
                 for item in failures[: idx + 1]
                 if start_ts <= _ts(item) <= end_ts
             ]
-            if len(failure_window) < 20:
+            if len(failure_window) < min_failures:
                 continue
 
             distinct_accounts = {
@@ -151,7 +167,7 @@ def detect_scn_002(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
                 for item in failure_window
                 if item.get("account_id")
             }
-            if len(distinct_accounts) < 5:
+            if len(distinct_accounts) < min_accounts:
                 continue
 
             success_window = [
@@ -182,18 +198,26 @@ def detect_scn_002(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
     return alerts
 
 
-def detect_scn_003(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_003(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_key_countries: dict[str, set[str]] = defaultdict(set)
     by_key_withdrawals: dict[str, list[float]] = defaultdict(list)
     recent_failures_by_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     thresholds = {
-        "BTC": 0.12,
-        "ETH": 0.8,
-        "SOL": 25.0,
-        "USDT": 5000.0,
+        "BTC": float(config.get("btc_amount_threshold", 0.12)),
+        "ETH": float(config.get("eth_amount_threshold", 0.8)),
+        "SOL": float(config.get("sol_amount_threshold", 25.0)),
+        "USDT": float(config.get("usdt_amount_threshold", 5000.0)),
     }
+    require_new_country = bool(config.get("require_new_country", True))
+    allow_first_withdrawal_trigger = bool(config.get("allow_first_withdrawal_trigger", True))
+    failure_lookback = timedelta(minutes=int(config.get("failure_lookback_minutes", 30)))
 
     sorted_events = sorted(events, key=_ts)
     for event in sorted_events:
@@ -230,12 +254,13 @@ def detect_scn_003(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
         recent_failures = [
             failure
             for failure in recent_failures_by_key[key]
-            if _ts(event) - timedelta(minutes=30) <= _ts(failure) <= _ts(event)
+            if _ts(event) - failure_lookback <= _ts(failure) <= _ts(event)
         ]
         first_withdrawal = len(previous_withdrawals) == 0
+        first_withdrawal_gate = first_withdrawal if allow_first_withdrawal_trigger else False
         is_high_amount = amount >= known_threshold
-
-        if is_new_country and (first_withdrawal or is_high_amount or bool(recent_failures)):
+        country_gate = is_new_country if require_new_country else True
+        if country_gate and (first_withdrawal_gate or is_high_amount or bool(recent_failures)):
             matched = recent_failures[-3:] + [event]
             alerts.append(
                 _build_alert(
@@ -256,15 +281,23 @@ def detect_scn_003(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
     return alerts
 
 
-def detect_scn_004(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_004(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_bot: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     for event in events:
         if event.get("event_type") in {"order.create", "order.cancel"} and event.get("bot_id"):
             by_bot[str(event["bot_id"])].append(event)
 
-    window = timedelta(minutes=10)
+    window = timedelta(minutes=int(config.get("window_minutes", 10)))
+    min_order_events = int(config.get("min_order_events", 120))
+    min_cancel_create_ratio = float(config.get("min_cancel_create_ratio", 1.3))
+    min_user_agents = int(config.get("min_user_agents", 2))
 
     for bot_id, bot_events in by_bot.items():
         bot_events.sort(key=_ts)
@@ -276,7 +309,7 @@ def detect_scn_004(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
 
             matched = bot_events[start_idx : end_idx + 1]
             total = len(matched)
-            if total < 120:
+            if total < min_order_events:
                 continue
 
             create_count = sum(1 for event in matched if event.get("event_type") == "order.create")
@@ -284,7 +317,7 @@ def detect_scn_004(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
             ratio = cancel_count / max(1, create_count)
             user_agents = {event.get("user_agent") for event in matched if event.get("user_agent")}
 
-            if ratio < 1.3 or len(user_agents) < 2:
+            if ratio < min_cancel_create_ratio or len(user_agents) < min_user_agents:
                 continue
 
             alerts.append(
@@ -305,15 +338,24 @@ def detect_scn_004(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
     return alerts
 
 
-def detect_scn_005(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_005(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     for event in events:
         if event.get("event_type") == "api_key.used" and event.get("api_key_id"):
             by_key[str(event["api_key_id"])].append(event)
 
-    window = timedelta(minutes=20)
+    window = timedelta(minutes=int(config.get("window_minutes", 20)))
+    min_events = int(config.get("min_events", 12))
+    min_regions = int(config.get("min_regions", 2))
+    min_user_agents = int(config.get("min_user_agents", 2))
+    require_read_write_mix = bool(config.get("require_read_write_mix", True))
     for api_key_id, key_events in by_key.items():
         key_events.sort(key=_ts)
         start_idx = 0
@@ -324,7 +366,7 @@ def detect_scn_005(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
                 start_idx += 1
 
             matched = key_events[start_idx : end_idx + 1]
-            if len(matched) < 12:
+            if len(matched) < min_events:
                 continue
 
             regions = {event.get("region") for event in matched if event.get("region")}
@@ -332,7 +374,8 @@ def detect_scn_005(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
             has_read = any(event.get("endpoint") in READ_ENDPOINTS for event in matched)
             has_write = any(event.get("endpoint") not in READ_ENDPOINTS for event in matched)
 
-            if len(regions) < 2 or len(user_agents) < 2 or not (has_read and has_write):
+            read_write_gate = (has_read and has_write) if require_read_write_mix else True
+            if len(regions) < min_regions or len(user_agents) < min_user_agents or not read_write_gate:
                 continue
 
             alerts.append(
@@ -353,15 +396,24 @@ def detect_scn_005(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
     return alerts
 
 
-def detect_scn_006(events: list[dict[str, Any]], scenario: dict[str, Any]) -> list[Alert]:
+def detect_scn_006(
+    events: list[dict[str, Any]],
+    scenario: dict[str, Any],
+    rule_config: dict[str, Any] | None = None,
+) -> list[Alert]:
     alerts: list[Alert] = []
     by_key: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    config = rule_config or {}
 
     for event in events:
         if event.get("event_type") == "api_key.used" and event.get("api_key_id"):
             by_key[str(event["api_key_id"])].append(event)
 
-    window = timedelta(minutes=5)
+    window = timedelta(minutes=int(config.get("window_minutes", 5)))
+    min_read_requests = int(config.get("min_read_requests", 150))
+    min_endpoint_variety = int(config.get("min_endpoint_variety", 3))
+    low_latency_ratio = float(config.get("low_latency_ratio", 0.4))
+    low_latency_threshold_ms = float(config.get("low_latency_threshold_ms", 20))
     for api_key_id, key_events in by_key.items():
         key_events.sort(key=_ts)
         start_idx = 0
@@ -373,7 +425,7 @@ def detect_scn_006(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
 
             matched = key_events[start_idx : end_idx + 1]
             read_events = [event for event in matched if event.get("endpoint") in READ_ENDPOINTS]
-            if len(read_events) < 150:
+            if len(read_events) < min_read_requests:
                 continue
 
             endpoint_variety = {event.get("endpoint") for event in read_events}
@@ -381,9 +433,9 @@ def detect_scn_006(events: list[dict[str, Any]], scenario: dict[str, Any]) -> li
                 1
                 for event in read_events
                 if isinstance(event.get("details"), dict)
-                and float(event.get("details", {}).get("latency_ms", 9999)) <= 20
+                and float(event.get("details", {}).get("latency_ms", 9999)) <= low_latency_threshold_ms
             )
-            if len(endpoint_variety) < 3 or low_latency < int(len(read_events) * 0.4):
+            if len(endpoint_variety) < min_endpoint_variety or low_latency < int(len(read_events) * low_latency_ratio):
                 continue
 
             alerts.append(

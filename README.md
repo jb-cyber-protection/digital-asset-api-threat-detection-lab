@@ -17,6 +17,7 @@ This repository follows an issue-driven implementation workflow.
 - Triage enrichment workflow: [docs/detections/TRIAGE_WORKFLOW.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/detections/TRIAGE_WORKFLOW.md)
 - SOC runbooks and escalation templates: [runbooks/README.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/runbooks/README.md)
 - Incident case artifacts: `reports/cases/` and `reports/incidents/evidence/`
+- Tuning analysis and metrics: [reports/metrics/I-008-tuning-report.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/reports/metrics/I-008-tuning-report.md)
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
@@ -49,6 +50,11 @@ This repository follows an issue-driven implementation workflow.
 - Three incident case artifacts with full chronology and escalation notes
 - Ticket narratives and evidence snapshots linked to detector outputs
 - Includes both true-positive and false-positive outcomes for analyst quality demonstration
+
+## I-008 Delivered
+- Config-driven baseline vs tuned detection profiles
+- Reproducible KPI evaluation pipeline (`scripts/evaluate_tuning.py`)
+- False-positive root-cause analysis and measured improvements across multiple rules
 
 ## Quick Start
 ### 1) Create environment (recommended)

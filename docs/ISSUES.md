@@ -108,7 +108,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Handoff quality is complete and unambiguous
 
 ## I-008 - Detection Tuning and Metrics
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added baseline vs tuned detection profiles, reproducible tuning evaluation script, KPI metrics (precision/escalation/reopen proxies), and documented false-positive root causes with measurable multi-rule improvements.
 - **Goal:** Demonstrate continuous improvement mindset.
 - **Deliverables:**
   - False-positive analysis with root causes

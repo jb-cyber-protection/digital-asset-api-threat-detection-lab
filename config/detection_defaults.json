@@ -1,5 +1,92 @@
 {
-  "default_severity": "medium",
-  "default_confidence": 0.5,
-  "notes": "Baseline detection configuration for scaffold. Expanded in I-004."
+  "active_profile": "tuned",
+  "profiles": {
+    "baseline": {
+      "SCN-001": {
+        "window_minutes": 10,
+        "min_distinct_countries": 2,
+        "require_failure_prelude": true
+      },
+      "SCN-002": {
+        "window_minutes": 5,
+        "min_failures": 20,
+        "min_accounts": 5
+      },
+      "SCN-003": {
+        "failure_lookback_minutes": 30,
+        "require_new_country": true,
+        "allow_first_withdrawal_trigger": true,
+        "btc_amount_threshold": 0.1,
+        "eth_amount_threshold": 0.7,
+        "sol_amount_threshold": 15,
+        "usdt_amount_threshold": 4000
+      },
+      "SCN-004": {
+        "window_minutes": 10,
+        "min_order_events": 100,
+        "min_cancel_create_ratio": 1.2,
+        "min_user_agents": 2
+      },
+      "SCN-005": {
+        "window_minutes": 20,
+        "min_events": 10,
+        "min_regions": 2,
+        "min_user_agents": 2,
+        "require_read_write_mix": true
+      },
+      "SCN-006": {
+        "window_minutes": 5,
+        "min_read_requests": 120,
+        "min_endpoint_variety": 2,
+        "low_latency_ratio": 0.25,
+        "low_latency_threshold_ms": 25
+      }
+    },
+    "tuned": {
+      "SCN-001": {
+        "window_minutes": 10,
+        "min_distinct_countries": 3,
+        "require_failure_prelude": true
+      },
+      "SCN-002": {
+        "window_minutes": 5,
+        "min_failures": 20,
+        "min_accounts": 5
+      },
+      "SCN-003": {
+        "failure_lookback_minutes": 30,
+        "require_new_country": true,
+        "allow_first_withdrawal_trigger": false,
+        "btc_amount_threshold": 0.14,
+        "eth_amount_threshold": 1.0,
+        "sol_amount_threshold": 22,
+        "usdt_amount_threshold": 6000
+      },
+      "SCN-004": {
+        "window_minutes": 10,
+        "min_order_events": 120,
+        "min_cancel_create_ratio": 1.3,
+        "min_user_agents": 2
+      },
+      "SCN-005": {
+        "window_minutes": 20,
+        "min_events": 12,
+        "min_regions": 2,
+        "min_user_agents": 2,
+        "require_read_write_mix": true
+      },
+      "SCN-006": {
+        "window_minutes": 5,
+        "min_read_requests": 150,
+        "min_endpoint_variety": 3,
+        "low_latency_ratio": 0.4,
+        "low_latency_threshold_ms": 20
+      }
+    }
+  },
+  "metric_definitions": {
+    "precision_proxy": "unique_expected_scenarios_detected / (unique_expected_scenarios_detected + benign_alert_count)",
+    "escalation_quality_proxy": "alerts_with_complete_handoff_fields / total_alerts",
+    "reopen_rate_proxy": "benign_alert_count / (benign_alert_count + true_positive_proxy)"
+  }
 }

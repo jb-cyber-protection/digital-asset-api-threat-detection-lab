@@ -16,7 +16,9 @@ from digital_asset_lab.detections.rules import (
 )
 from digital_asset_lab.detections.schema import Alert
 
-RuleFn = Callable[[list[dict[str, Any]], dict[str, Any]], list[Alert]]
+DEFAULT_DETECTION_CONFIG_PATH = "config/detection_defaults.json"
+
+RuleFn = Callable[[list[dict[str, Any]], dict[str, Any], dict[str, Any]], list[Alert]]
 
 RULES: dict[str, RuleFn] = {
     "SCN-001": detect_scn_001,
@@ -40,18 +42,32 @@ def load_scenario_map(scenario_library_path: str | Path) -> dict[str, dict[str, 
     return {scenario["scenario_id"]: scenario for scenario in payload["scenarios"]}
 
 
+def load_detection_profile(
+    detection_config_path: str | Path = DEFAULT_DETECTION_CONFIG_PATH,
+    tuning_profile: str = "",
+) -> dict[str, dict[str, Any]]:
+    payload = json.loads(Path(detection_config_path).read_text(encoding="utf-8"))
+    profile_name = tuning_profile or payload.get("active_profile", "tuned")
+    profiles = payload.get("profiles", {})
+    return profiles.get(profile_name, {})
+
+
 def run_detection_engine(
     events: list[dict[str, Any]],
     scenario_library_path: str | Path,
+    detection_config_path: str | Path = DEFAULT_DETECTION_CONFIG_PATH,
+    tuning_profile: str = "",
 ) -> list[dict[str, Any]]:
     scenario_map = load_scenario_map(scenario_library_path)
+    detection_profile = load_detection_profile(detection_config_path, tuning_profile)
 
     alerts: list[Alert] = []
     for scenario_id, rule_fn in RULES.items():
         scenario = scenario_map.get(scenario_id)
         if not scenario:
             continue
-        alerts.extend(rule_fn(events, scenario))
+        rule_config = detection_profile.get(scenario_id, {})
+        alerts.extend(rule_fn(events, scenario, rule_config))
 
     alerts.sort(
         key=lambda alert: (

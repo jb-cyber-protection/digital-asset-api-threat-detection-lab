@@ -55,7 +55,7 @@ class TestTriageEnrichment(unittest.TestCase):
         events = [
             self._event(1, start + timedelta(minutes=0), "auth.login.failure", {"failure_reason": "bad_signature"}, "GB"),
             self._event(2, start + timedelta(minutes=1), "api_key.used", {"latency_ms": 12}, "US", "us-east-1", "ua-shift", "/v1/order/create"),
-            self._event(3, start + timedelta(minutes=2), "api_key.used", {"latency_ms": 11}, "GB"),
+            self._event(3, start + timedelta(minutes=2), "api_key.used", {"latency_ms": 11}, "SG", "ap-southeast-1", "ua-shift", "/v1/order/create"),
         ]
 
         alerts = run_detection_engine(events=events, scenario_library_path=SCENARIO_LIBRARY_PATH)
@@ -90,7 +90,7 @@ class TestTriageEnrichment(unittest.TestCase):
         events = [
             self._event(10, start + timedelta(minutes=3), "api_key.used", {"latency_ms": 9}, "US", "us-east-1", "ua-a", "/v1/order/create"),
             self._event(11, start + timedelta(minutes=1), "auth.login.failure", {"failure_reason": "expired_nonce"}, "GB"),
-            self._event(12, start + timedelta(minutes=2), "api_key.used", {"latency_ms": 10}, "GB", "eu-west-2", "ua-b", "/v1/balance"),
+            self._event(12, start + timedelta(minutes=2), "api_key.used", {"latency_ms": 10}, "SG", "ap-southeast-1", "ua-b", "/v1/balance"),
         ]
 
         alerts = run_detection_engine(events=events, scenario_library_path=SCENARIO_LIBRARY_PATH)

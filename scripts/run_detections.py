@@ -18,6 +18,7 @@ from digital_asset_lab.common.constants import DEFAULT_ALERT_PATH, DEFAULT_OUTPU
 from digital_asset_lab.detections.engine import run_detection_engine
 
 DEFAULT_SCENARIO_LIBRARY_PATH = "data/scenarios/scenario_library.json"
+DEFAULT_DETECTION_CONFIG_PATH = "config/detection_defaults.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,6 +29,16 @@ def parse_args() -> argparse.Namespace:
         "--scenario-library",
         default=DEFAULT_SCENARIO_LIBRARY_PATH,
         help="Scenario library JSON path",
+    )
+    parser.add_argument(
+        "--detection-config",
+        default=DEFAULT_DETECTION_CONFIG_PATH,
+        help="Detection tuning config JSON path",
+    )
+    parser.add_argument(
+        "--tuning-profile",
+        default="",
+        help="Optional tuning profile override (e.g. baseline, tuned)",
     )
     return parser.parse_args()
 
@@ -53,7 +64,12 @@ def main() -> int:
 
     alerts_path.parent.mkdir(parents=True, exist_ok=True)
     events = _load_events(events_path)
-    alerts = run_detection_engine(events=events, scenario_library_path=args.scenario_library)
+    alerts = run_detection_engine(
+        events=events,
+        scenario_library_path=args.scenario_library,
+        detection_config_path=args.detection_config,
+        tuning_profile=args.tuning_profile,
+    )
 
     with alerts_path.open("w", encoding="utf-8") as handle:
         for alert in alerts:
