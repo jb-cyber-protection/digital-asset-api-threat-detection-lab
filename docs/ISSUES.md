@@ -95,7 +95,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Documents are interview-ready and concise
 
 ## I-007 - Incident Case Artifacts
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added 3 complete case artifacts with chronology, ticket narratives, escalation notes, evidence snapshots, and mixed TP/FP outcomes.
 - **Goal:** Produce realistic case files showing investigation quality.
 - **Deliverables:**
   - At least 3 sample incidents from different scenarios

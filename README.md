@@ -16,6 +16,7 @@ This repository follows an issue-driven implementation workflow.
 - Detection rule engine + alert schema: [docs/detections/RULE_ENGINE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/detections/RULE_ENGINE.md)
 - Triage enrichment workflow: [docs/detections/TRIAGE_WORKFLOW.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/detections/TRIAGE_WORKFLOW.md)
 - SOC runbooks and escalation templates: [runbooks/README.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/runbooks/README.md)
+- Incident case artifacts: `reports/cases/` and `reports/incidents/evidence/`
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
@@ -43,6 +44,11 @@ This repository follows an issue-driven implementation workflow.
 - Five SOC runbooks covering token abuse, suspicious login, key misuse, malware-like endpoint signal, and exfiltration burst events
 - Updated L1->L2 handoff template
 - Containment action matrix defining L1-authorized vs escalate-only actions
+
+## I-007 Delivered
+- Three incident case artifacts with full chronology and escalation notes
+- Ticket narratives and evidence snapshots linked to detector outputs
+- Includes both true-positive and false-positive outcomes for analyst quality demonstration
 
 ## Quick Start
 ### 1) Create environment (recommended)

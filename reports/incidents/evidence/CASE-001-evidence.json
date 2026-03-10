@@ -1,0 +1,22 @@
+{
+  "case_id": "CASE-001",
+  "alert_id": "al-scn-003-evt-00000021",
+  "events": [
+    {
+      "event_id": "evt-00000021",
+      "timestamp": "2026-01-01T00:00:02.715000+00:00",
+      "event_type": "withdrawal.request",
+      "account_id": "acct-ar-002",
+      "api_key_id": "key-ar-002",
+      "ip_country": "IE",
+      "endpoint": "/v1/withdrawals",
+      "details": {
+        "asset": "BTC",
+        "amount": 0.121166,
+        "network": "bitcoin",
+        "destination_type": "internal_vault",
+        "risk_score": 0.162
+      }
+    }
+  ]
+}

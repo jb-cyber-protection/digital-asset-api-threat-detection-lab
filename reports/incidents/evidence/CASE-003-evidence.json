@@ -1,0 +1,26 @@
+{
+  "case_id": "CASE-003",
+  "alert_id": "al-scn-003-evt-00000091",
+  "events": [
+    {
+      "event_id": "evt-00000091",
+      "timestamp": "2026-01-01T00:00:12.422000+00:00",
+      "event_type": "withdrawal.request",
+      "account_id": "acct-mo-001",
+      "api_key_id": "key-mo-001",
+      "ip_country": "GB",
+      "endpoint": "/v1/withdrawals",
+      "details": {
+        "asset": "SOL",
+        "amount": 18.810768,
+        "destination_type": "whitelisted_hot_wallet",
+        "risk_score": 0.039
+      }
+    }
+  ],
+  "business_validation": {
+    "change_ticket": "TREAS-CHG-1042",
+    "approved_window": "2026-01-01T00:10:00+00:00 to 2026-01-01T00:20:00+00:00",
+    "result": "expected_treasury_rebalancing"
+  }
+}

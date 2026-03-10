@@ -1,0 +1,34 @@
+{
+  "case_id": "CASE-002",
+  "alert_id": "al-scn-001-evt-00000026",
+  "events": [
+    {
+      "event_id": "evt-00000026",
+      "timestamp": "2026-01-01T00:00:03.317000+00:00",
+      "event_type": "api_key.used",
+      "ip_country": "NL",
+      "endpoint": "/v1/balance"
+    },
+    {
+      "event_id": "evt-00000076",
+      "timestamp": "2026-01-01T00:00:10.104000+00:00",
+      "event_type": "order.create",
+      "ip_country": "SG",
+      "endpoint": "/v1/order/create"
+    },
+    {
+      "event_id": "evt-00000107",
+      "timestamp": "2026-01-01T00:00:14.678000+00:00",
+      "event_type": "api_key.used",
+      "ip_country": "US",
+      "endpoint": "/v1/balance"
+    },
+    {
+      "event_id": "evt-00000131",
+      "timestamp": "2026-01-01T00:00:17.879000+00:00",
+      "event_type": "auth.login.failure",
+      "ip_country": "IE",
+      "endpoint": "/v1/auth/login"
+    }
+  ]
+}
