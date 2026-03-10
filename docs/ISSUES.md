@@ -56,7 +56,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Mapping and rationale are documented
 
 ## I-004 - Detection Engine (Rule-Based)
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Implemented 6 scenario-linked detection rules with severity/confidence metadata, ATT&CK-tagged alert schema, and tests proving each injected scenario triggers alerts.
 - **Goal:** Build first-pass detections over generated logs.
 - **Deliverables:**
   - Rule framework with metadata (severity, confidence, ATT&CK tag)
