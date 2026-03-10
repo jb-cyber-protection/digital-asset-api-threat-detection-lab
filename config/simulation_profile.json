@@ -1,0 +1,10 @@
+{
+  "seed": 7,
+  "default_events": 100,
+  "profiles": [
+    "market_maker",
+    "momentum",
+    "arb_like"
+  ],
+  "notes": "Baseline profile for scaffolding. Expanded in I-002."
+}

@@ -1,0 +1,5 @@
+{
+  "default_severity": "medium",
+  "default_confidence": 0.5,
+  "notes": "Baseline detection configuration for scaffold. Expanded in I-004."
+}
