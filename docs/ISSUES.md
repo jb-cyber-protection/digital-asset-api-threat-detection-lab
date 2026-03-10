@@ -69,7 +69,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Detection results are reproducible
 
 ## I-005 - Alert Enrichment and Triage Workflow
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added enrichment pipeline with correlated timelines, entity/IOC context, severity recommendations, false-positive hints, and ticket-ready JSON/markdown outputs.
 - **Goal:** Enrich raw alerts with analyst-friendly investigation context.
 - **Deliverables:**
   - Timeline builder for alert-correlated events

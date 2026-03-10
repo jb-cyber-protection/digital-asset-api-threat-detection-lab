@@ -30,3 +30,6 @@ data/generated/*.json
 reports/incidents/*.md
 reports/metrics/*.json
 reports/portfolio/*.md
+reports/tickets/*.jsonl
+reports/tickets/markdown/*.md
+reports/tickets/smoke_markdown/*.md

@@ -14,6 +14,7 @@ This repository follows an issue-driven implementation workflow.
 - Simulator data contract and profile behavior: [docs/SIMULATOR_SPEC.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/SIMULATOR_SPEC.md)
 - Threat scenarios and ATT&CK mapping: [docs/scenarios/SCENARIO_CATALOG.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/scenarios/SCENARIO_CATALOG.md)
 - Detection rule engine + alert schema: [docs/detections/RULE_ENGINE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/detections/RULE_ENGINE.md)
+- Triage enrichment workflow: [docs/detections/TRIAGE_WORKFLOW.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/detections/TRIAGE_WORKFLOW.md)
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
@@ -31,6 +32,11 @@ This repository follows an issue-driven implementation workflow.
 - Scenario-linked rule engine with severity/confidence metadata
 - Detection coverage for all I-003 scenarios (SCN-001 to SCN-006)
 - Structured alert output schema for SOC L1 triage and escalation
+
+## I-005 Delivered
+- Alert enrichment pipeline producing ticket-ready triage records
+- Correlated timelines, IOC/entity context, and escalation handoff payloads
+- Scenario-specific false-positive hints and severity recommendation logic
 
 ## Quick Start
 ### 1) Create environment (recommended)
