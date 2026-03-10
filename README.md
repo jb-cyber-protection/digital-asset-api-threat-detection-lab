@@ -11,6 +11,13 @@ This repository follows an issue-driven implementation workflow.
 - Backlog and execution order: [docs/ISSUES.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/ISSUES.md)
 - Structure map and issue targets: [docs/REPO_STRUCTURE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/REPO_STRUCTURE.md)
 - Quality gate/checklist: [docs/DEFINITION_OF_DONE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/DEFINITION_OF_DONE.md)
+- Simulator data contract and profile behavior: [docs/SIMULATOR_SPEC.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/SIMULATOR_SPEC.md)
+
+## I-002 Delivered
+- Config-driven synthetic event simulator for digital-asset API/trading telemetry
+- Distinct normal bot profiles: `market_maker`, `momentum`, `arb_like`
+- Deterministic generation with seed + fixed start time
+- Event families included: auth, order create/cancel, API key usage, withdrawals, and WebSocket heartbeats
 
 ## Quick Start
 ### 1) Create environment (recommended)
@@ -27,13 +34,18 @@ make smoke
 
 Equivalent commands:
 ```bash
-python3 scripts/generate_activity.py --events 25 --output data/generated/smoke_events.jsonl
+python3 scripts/generate_activity.py --events 250 --output data/generated/smoke_events.jsonl --summary data/generated/smoke_summary.json
 python3 scripts/run_detections.py --events data/generated/smoke_events.jsonl --alerts data/generated/smoke_alerts.jsonl
 ```
 
 ### 3) Run tests
 ```bash
-python3 -m unittest discover -s tests
+make test
+```
+
+### 4) Generate a full 10k event dataset
+```bash
+python3 scripts/generate_activity.py --events 10000 --seed 7 --start-time "2026-01-01T00:00:00+00:00" --output data/generated/i002_events.jsonl --summary data/generated/i002_summary.json
 ```
 
 ## Intended Outcome

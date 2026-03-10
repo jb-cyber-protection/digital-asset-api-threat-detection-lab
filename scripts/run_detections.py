@@ -19,7 +19,12 @@ if str(SRC) not in sys.path:
 from digital_asset_lab.common.constants import DEFAULT_ALERT_PATH, DEFAULT_OUTPUT_PATH
 
 
-ALERT_EVENT_TYPES = {"auth.failure", "withdrawal.create"}
+ALERT_EVENT_TYPES = {
+    "auth.failure",
+    "withdrawal.create",
+    "auth.login.failure",
+    "withdrawal.request",
+}
 
 
 def parse_args() -> argparse.Namespace:

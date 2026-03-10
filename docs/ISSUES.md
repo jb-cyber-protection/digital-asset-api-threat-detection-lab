@@ -30,7 +30,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Basic local run instructions exist
 
 ## I-002 - Trading/API Activity Simulator
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added config-driven 10k+ event simulator with distinct bot profiles, reproducible seed/start-time generation, tests, and simulator spec docs.
 - **Goal:** Generate realistic digital-asset trading and API logs.
 - **Deliverables:**
   - Synthetic event generator for auth, orders, cancels, key usage, and withdrawals

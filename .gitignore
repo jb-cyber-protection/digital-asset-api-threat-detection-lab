@@ -26,6 +26,7 @@ htmlcov/
 
 # Generated lab outputs
 data/generated/*.jsonl
+data/generated/*.json
 reports/incidents/*.md
 reports/metrics/*.json
 reports/portfolio/*.md

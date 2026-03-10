@@ -1,10 +1,90 @@
 {
   "seed": 7,
-  "default_events": 100,
-  "profiles": [
-    "market_maker",
-    "momentum",
-    "arb_like"
+  "default_events": 10000,
+  "start_time": "2026-01-01T00:00:00+00:00",
+  "profile_weights": {
+    "market_maker": 0.45,
+    "momentum": 0.35,
+    "arb_like": 0.20
+  },
+  "event_type_weights": {
+    "market_maker": {
+      "auth.login.success": 0.04,
+      "auth.login.failure": 0.005,
+      "api_key.used": 0.18,
+      "order.create": 0.35,
+      "order.cancel": 0.33,
+      "withdrawal.request": 0.005,
+      "ws.heartbeat": 0.09
+    },
+    "momentum": {
+      "auth.login.success": 0.05,
+      "auth.login.failure": 0.01,
+      "api_key.used": 0.20,
+      "order.create": 0.47,
+      "order.cancel": 0.12,
+      "withdrawal.request": 0.01,
+      "ws.heartbeat": 0.14
+    },
+    "arb_like": {
+      "auth.login.success": 0.04,
+      "auth.login.failure": 0.01,
+      "api_key.used": 0.24,
+      "order.create": 0.42,
+      "order.cancel": 0.18,
+      "withdrawal.request": 0.01,
+      "ws.heartbeat": 0.10
+    }
+  },
+  "profiles": {
+    "market_maker": {
+      "accounts": 10,
+      "countries": ["GB", "NL", "FR"],
+      "cadence_ms": [40, 180],
+      "order_size": [0.01, 0.40],
+      "quote_offset_bps": [-2.5, 2.5],
+      "time_in_force": ["GTC", "IOC"]
+    },
+    "momentum": {
+      "accounts": 8,
+      "countries": ["US", "GB", "DE"],
+      "cadence_ms": [80, 320],
+      "order_size": [0.03, 0.95],
+      "quote_offset_bps": [-8.0, 9.0],
+      "time_in_force": ["IOC", "FOK", "GTC"]
+    },
+    "arb_like": {
+      "accounts": 7,
+      "countries": ["NL", "SG", "US", "IE"],
+      "cadence_ms": [30, 150],
+      "order_size": [0.02, 0.70],
+      "quote_offset_bps": [-4.0, 4.0],
+      "time_in_force": ["IOC", "GTC"]
+    }
+  },
+  "exchanges": ["binance", "coinbase", "kraken", "okx", "bybit"],
+  "symbols": {
+    "BTC-USD": {
+      "base_price": 68000,
+      "volatility_bps": 12,
+      "trend_bps": 1.8
+    },
+    "ETH-USD": {
+      "base_price": 3600,
+      "volatility_bps": 16,
+      "trend_bps": 2.2
+    },
+    "SOL-USD": {
+      "base_price": 142,
+      "volatility_bps": 21,
+      "trend_bps": 2.5
+    }
+  },
+  "user_agents": [
+    "keyrock-lab-mm/2.1",
+    "keyrock-lab-momentum/2.4",
+    "keyrock-lab-arb/2.2",
+    "keyrock-lab-exec/2.0"
   ],
-  "notes": "Baseline profile for scaffolding. Expanded in I-002."
+  "notes": "I-002 simulator profile defining bot behavior, cadence, and event weights."
 }

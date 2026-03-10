@@ -41,6 +41,8 @@ class TestScaffoldSmoke(unittest.TestCase):
         sample = json.loads(lines[0])
         self.assertIn("event_id", sample)
         self.assertIn("event_type", sample)
+        self.assertIn("profile", sample)
+        self.assertIn("timestamp", sample)
 
 
 if __name__ == "__main__":
