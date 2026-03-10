@@ -1,0 +1,313 @@
+{
+  "version": "1.0.0",
+  "updated_on": "2026-03-10",
+  "source": "I-003 threat scenario library",
+  "schema_notes": "Scenarios are designed for cloud-first digital-asset API and trading operations.",
+  "scenarios": [
+    {
+      "scenario_id": "SCN-001",
+      "name": "API Key Replay From New Geography",
+      "priority": "high",
+      "summary": "A valid API key is reused from atypical geographies and user-agent context, indicating key theft or reuse.",
+      "trigger_conditions": [
+        "Same api_key_id observed from 2+ ip_country values within 10 minutes.",
+        "At least 1 auth.login.failure precedes the first high-risk api_key.used event in the same account context.",
+        "Endpoint usage shifts from read-only to trade endpoints in the risk window."
+      ],
+      "detection_hints": {
+        "window_minutes": 10,
+        "min_distinct_countries": 2,
+        "require_failure_prelude": true
+      },
+      "ioc_expectations": {
+        "primary": [
+          "api_key_id",
+          "source ip",
+          "ip_country",
+          "user_agent"
+        ],
+        "secondary": [
+          "request_id",
+          "account_id",
+          "bot_id",
+          "endpoint"
+        ]
+      },
+      "expected_analyst_response": [
+        "Confirm whether country and user-agent shift is expected for that account.",
+        "Isolate affected key and review all requests in the 10-minute risk window.",
+        "Escalate immediately if trade endpoints were used after suspicious authentication activity."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Credential Access",
+          "technique_id": "T1550",
+          "technique_name": "Use Alternate Authentication Material",
+          "rationale": "Abuse of stolen API keys aligns with alternate authentication material usage."
+        },
+        {
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "rationale": "Attacker actions are performed through legitimate credentials."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCN-002",
+      "name": "Credential Stuffing Against API Authentication",
+      "priority": "high",
+      "summary": "One or more source IPs generate bursts of authentication failures across multiple accounts before a successful login.",
+      "trigger_conditions": [
+        "Single IP produces 20+ auth.login.failure events in 5 minutes.",
+        "Failures target at least 5 distinct account_id values.",
+        "At least one auth.login.success follows the failure burst."
+      ],
+      "detection_hints": {
+        "window_minutes": 5,
+        "min_failures": 20,
+        "min_accounts": 5
+      },
+      "ioc_expectations": {
+        "primary": [
+          "source ip",
+          "target account_id set",
+          "failure_reason patterns"
+        ],
+        "secondary": [
+          "user_agent",
+          "request_id",
+          "region"
+        ]
+      },
+      "expected_analyst_response": [
+        "Validate burst behavior against known scanner/noise allowlists.",
+        "Identify potentially compromised account(s) where success follows failures.",
+        "Escalate if authenticated sessions are established after brute-force indicators."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Credential Access",
+          "technique_id": "T1110",
+          "technique_name": "Brute Force",
+          "rationale": "High-volume failed authentication attempts across accounts match brute-force behavior."
+        },
+        {
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "rationale": "Successful login after stuffing indicates compromise of valid credentials."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCN-003",
+      "name": "Suspicious Withdrawal Request Chain",
+      "priority": "critical",
+      "summary": "Withdrawal requests appear from abnormal context and amount profile, suggesting account takeover and fund-exfil attempt.",
+      "trigger_conditions": [
+        "withdrawal.request appears with no recent normal withdrawal history for the key/account.",
+        "Withdrawal amount exceeds profile baseline (e.g., >95th percentile for account).",
+        "Request originates from new ip_country or region compared with prior 30-day baseline."
+      ],
+      "detection_hints": {
+        "window_minutes": 30,
+        "amount_percentile_threshold": 95,
+        "require_geo_novelty": true
+      },
+      "ioc_expectations": {
+        "primary": [
+          "api_key_id",
+          "withdrawal asset",
+          "withdrawal amount",
+          "ip_country"
+        ],
+        "secondary": [
+          "network",
+          "destination_type",
+          "request_id"
+        ]
+      },
+      "expected_analyst_response": [
+        "Confirm whether withdrawal timing and amount are expected for account operations.",
+        "If suspicious, trigger immediate containment: key revocation and withdrawal hold per policy.",
+        "Escalate to IR/L2 with full transaction context and authentication timeline."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Persistence",
+          "technique_id": "T1098",
+          "technique_name": "Account Manipulation",
+          "rationale": "Withdrawal abuse often includes account or key configuration manipulation."
+        },
+        {
+          "tactic": "Exfiltration",
+          "technique_id": "T1567",
+          "technique_name": "Exfiltration Over Web Service",
+          "rationale": "Fund movement over API channels is analogous to web-service exfil patterns."
+        },
+        {
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "rationale": "Abuse is executed through valid account context."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCN-004",
+      "name": "Bot Hijack Causing Order-Book Manipulation Signals",
+      "priority": "high",
+      "summary": "Compromised bot emits abnormal create/cancel bursts inconsistent with baseline strategy behavior.",
+      "trigger_conditions": [
+        "order.create + order.cancel rate exceeds bot baseline by 3x in 10 minutes.",
+        "Cancel-to-create ratio for a profile deviates from expected norm (e.g., market_maker spike).",
+        "Behavior coincides with user-agent or geolocation change for same bot/account."
+      ],
+      "detection_hints": {
+        "window_minutes": 10,
+        "min_order_events": 120,
+        "ratio_deviation_multiplier": 3
+      },
+      "ioc_expectations": {
+        "primary": [
+          "bot_id",
+          "account_id",
+          "order_id burst set",
+          "user_agent changes"
+        ],
+        "secondary": [
+          "symbol concentration",
+          "api_key_id",
+          "ip_country"
+        ]
+      },
+      "expected_analyst_response": [
+        "Compare observed order behavior with profile baseline for market_maker/momentum/arb_like.",
+        "Assess whether strategy deploy or expected volatility explains the pattern.",
+        "Escalate and isolate if manipulation-like behavior is unexplained by trading context."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Impact",
+          "technique_id": "T1565",
+          "technique_name": "Data Manipulation",
+          "rationale": "Manipulation of order flow/market signals aligns with data manipulation outcomes."
+        },
+        {
+          "tactic": "Impact",
+          "technique_id": "T1499",
+          "technique_name": "Endpoint Denial of Service",
+          "rationale": "Order flood/cancel storm can degrade exchange or internal endpoint performance."
+        },
+        {
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "rationale": "Behavior is executed through compromised but valid bot credentials."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCN-005",
+      "name": "Cloud Service Token Misuse in Trading Context",
+      "priority": "high",
+      "summary": "Application token/API material used from non-standard infrastructure region or runtime identity.",
+      "trigger_conditions": [
+        "api_key.used appears from region not in expected profile infrastructure set.",
+        "Unusual user_agent appears for same key/account in short period.",
+        "Token activity occurs outside expected deployment/change windows."
+      ],
+      "detection_hints": {
+        "window_minutes": 20,
+        "require_region_novelty": true,
+        "require_user_agent_shift": true
+      },
+      "ioc_expectations": {
+        "primary": [
+          "api_key_id",
+          "region",
+          "user_agent",
+          "endpoint"
+        ],
+        "secondary": [
+          "request_id",
+          "account_id",
+          "source ip"
+        ]
+      },
+      "expected_analyst_response": [
+        "Correlate token use with cloud deployment and IAM change records.",
+        "Assess blast radius across all requests by the same key in the suspicious window.",
+        "Escalate if access token use cannot be tied to approved operational change."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Credential Access",
+          "technique_id": "T1528",
+          "technique_name": "Steal Application Access Token",
+          "rationale": "Cloud/service token theft is directly represented by this technique."
+        },
+        {
+          "tactic": "Credential Access",
+          "technique_id": "T1550",
+          "technique_name": "Use Alternate Authentication Material",
+          "rationale": "Stolen tokens are reused as alternate auth artifacts."
+        },
+        {
+          "tactic": "Initial Access",
+          "technique_id": "T1078",
+          "technique_name": "Valid Accounts",
+          "rationale": "Actor operates through legitimate service identities."
+        }
+      ]
+    },
+    {
+      "scenario_id": "SCN-006",
+      "name": "Data Exfiltration-Like API Enumeration",
+      "priority": "medium",
+      "summary": "Read-heavy API bursts enumerate positions/balances/orders beyond normal strategy behavior.",
+      "trigger_conditions": [
+        "api_key.used read-only endpoints exceed 150 requests in 5 minutes for one key.",
+        "Read burst is combined with low-latency repetitive request pattern.",
+        "Burst originates from new source context (ip_country/user_agent) or outside expected hours."
+      ],
+      "detection_hints": {
+        "window_minutes": 5,
+        "min_read_requests": 150,
+        "min_endpoint_variety": 3
+      },
+      "ioc_expectations": {
+        "primary": [
+          "api_key_id",
+          "endpoint frequency",
+          "latency_ms pattern"
+        ],
+        "secondary": [
+          "ip_country",
+          "region",
+          "request_id"
+        ]
+      },
+      "expected_analyst_response": [
+        "Validate whether read burst aligns with known reconciliation/operations jobs.",
+        "Quantify potentially exposed data scope by endpoint and account.",
+        "Escalate if volume and context indicate unauthorized collection intent."
+      ],
+      "mitre_attack": [
+        {
+          "tactic": "Collection",
+          "technique_id": "T1213",
+          "technique_name": "Data from Information Repositories",
+          "rationale": "Endpoint enumeration targets sensitive account and position repositories."
+        },
+        {
+          "tactic": "Exfiltration",
+          "technique_id": "T1567",
+          "technique_name": "Exfiltration Over Web Service",
+          "rationale": "Collected data leaves through API/web-service channels."
+        }
+      ]
+    }
+  ]
+}

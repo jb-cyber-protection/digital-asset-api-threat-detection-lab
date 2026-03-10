@@ -12,12 +12,19 @@ This repository follows an issue-driven implementation workflow.
 - Structure map and issue targets: [docs/REPO_STRUCTURE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/REPO_STRUCTURE.md)
 - Quality gate/checklist: [docs/DEFINITION_OF_DONE.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/DEFINITION_OF_DONE.md)
 - Simulator data contract and profile behavior: [docs/SIMULATOR_SPEC.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/SIMULATOR_SPEC.md)
+- Threat scenarios and ATT&CK mapping: [docs/scenarios/SCENARIO_CATALOG.md](/Users/jibz/Desktop/digital-asset-api-threat-detection-lab/docs/scenarios/SCENARIO_CATALOG.md)
 
 ## I-002 Delivered
 - Config-driven synthetic event simulator for digital-asset API/trading telemetry
 - Distinct normal bot profiles: `market_maker`, `momentum`, `arb_like`
 - Deterministic generation with seed + fixed start time
 - Event families included: auth, order create/cancel, API key usage, withdrawals, and WebSocket heartbeats
+
+## I-003 Delivered
+- Scenario library with 6 cloud-first digital-asset threat scenarios
+- IOC expectations and triage/escalation response guidance per scenario
+- MITRE ATT&CK mappings with rationale for each scenario
+- Machine-readable source of truth for upcoming detection implementation in `data/scenarios/scenario_library.json`
 
 ## Quick Start
 ### 1) Create environment (recommended)

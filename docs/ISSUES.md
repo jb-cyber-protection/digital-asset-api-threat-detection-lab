@@ -43,7 +43,8 @@ Issues start in `BACKLOG` and move through `IN_PROGRESS` -> `DONE` when executed
   - Output format supports downstream detections
 
 ## I-003 - Threat Scenario Library and ATT&CK Mapping
-- **Status:** BACKLOG
+- **Status:** DONE (2026-03-10)
+- **Completion Note:** Added a 6-scenario machine-readable library with IOC expectations, analyst response guidance, and ATT&CK mapping documentation + validation tests.
 - **Goal:** Define threat scenarios relevant to crypto trading API environments.
 - **Deliverables:**
   - Scenario catalog (minimum 5 scenarios)
